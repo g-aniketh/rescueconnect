@@ -1,56 +1,43 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap");
 @import "tailwindcss";
-
-@import "tailwindcss/preflight";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply text-neutral-800;
-  }
-
   body {
-    @apply bg-neutral-50 font-sans;
+    /* Replace bg-background with a specific color or class */
+    background-color: #f9fafb; /* Example: light gray background */
+    color: #111827; /* Example: dark text color */
+    @apply antialiased;
   }
-
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-display font-semibold;
+    @apply font-semibold text-gray-900; /* Consistent heading style */
   }
+  a {
+    @apply text-blue-600 hover:text-blue-700 transition-colors duration-200;
+  }
+  /* Define custom base styles if needed */
 }
 
-@layer components {
-  .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
+/* Example: Import a font like Inter */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
-
-  .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
-  }
-
-  .btn-secondary {
-    @apply btn bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
-  }
-
-  .btn-emergency {
-    @apply btn bg-emergency-600 text-white hover:bg-emergency-700 focus:ring-emergency-500;
-  }
-
-  .btn-outline {
-    @apply btn border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 focus:ring-primary-500;
-  }
-
-  .card {
-    @apply bg-white rounded-lg shadow-md border border-neutral-200 overflow-hidden;
-  }
+/* Add scrollbar styling if desired */
+/* ::-webkit-scrollbar {
+  width: 8px;
 }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+} */

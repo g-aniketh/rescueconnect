@@ -1,0 +1,76 @@
+{
+  "national": [
+    { "name": "National Emergency Number", "phone": "112" },
+    { "name": "Police", "phone": "100" },
+    { "name": "Fire", "phone": "101" },
+    { "name": "Ambulance", "phone": "102" },
+    {
+      "name": "NDRF Helpline",
+      "phone": "9711077372",
+      "email": "hq.ndrf@nic.in"
+    },
+    { "name": "Disaster Management (National)", "phone": "1078" },
+    { "name": "Women Helpline", "phone": "1091" },
+    { "name": "Child Helpline", "phone": "1098" }
+  ],
+  "states": {
+    "IN-TG": {
+      "stateName": "Telangana",
+      "isoCode": "IN-TG",
+      "stateLevel": [
+        {
+          "name": "Telangana State Disaster Response & Fire Services",
+          "phone": "101"
+        },
+        { "name": "Telangana State Police", "phone": "100" },
+        { "name": "Medical Helpline (Telangana)", "phone": "108" },
+        {
+          "name": "TSDM (Telangana State Disaster Management)",
+          "phone": "040-23450779"
+        }
+      ],
+      "districts": {
+        "hyderabad": {
+          "districtName": "Hyderabad",
+          "contacts": [
+            {
+              "name": "Hyderabad District Control Room",
+              "phone": "040-23202813"
+            },
+            { "name": "Hyderabad City Police", "phone": "100" },
+            { "name": "Hyderabad Fire Control", "phone": "101" }
+          ]
+        },
+        "rangareddy": {
+          "districtName": "Ranga Reddy",
+          "contacts": [
+            {
+              "name": "Ranga Reddy District Control Room",
+              "phone": "08413-233637"
+            }
+          ]
+        }
+      }
+    },
+    "IN-AP": {
+      "stateName": "Andhra Pradesh",
+      "isoCode": "IN-AP",
+      "stateLevel": [
+        {
+          "name": "Andhra Pradesh State Disaster Response & Fire Services",
+          "phone": "101"
+        },
+        { "name": "Andhra Pradesh Police", "phone": "100" },
+        { "name": "Medical Helpline (Andhra Pradesh)", "phone": "108" }
+      ],
+      "districts": {
+        "guntur": {
+          "districtName": "Guntur",
+          "contacts": [
+            { "name": "Guntur District Control Room", "phone": "0863-2234014" }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,156 +1,205 @@
-import { useState } from "react";
+// src/components/layout/Header.tsx
+import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Bars3Icon, XMarkIcon, CameraIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import Logo from "@/components/common/Logo";
+import Button from "@/components/common/Button";
+import { FiMenu, FiX, FiUploadCloud, FiPhoneCall } from "react-icons/fi"; // Example icons
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Header: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "About", path: "/about" },
+  ];
+
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
-  const handleFileUpload = () => {
-    document.getElementById("camera-input")?.click();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.log("Selected file:", file.name);
+      // Add logic to handle the uploaded file here (e.g., state update, API call)
+      // For now, it just logs the name. Reset input for re-upload.
+      event.target.value = ""; // Allow selecting the same file again
+    }
   };
+
+  // Close sidebar if clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node) &&
+        !toggleButtonRef.current?.contains(event.target as Node) // Don't close if clicking the toggle button itself
+      ) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+      isActive
+        ? "bg-primary/10 text-primary"
+        : "text-text-secondary hover:text-text-primary hover:bg-secondary-light/50"
+    );
+
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      "block px-3 py-2 rounded-md text-base font-medium transition-colors",
+      isActive
+        ? "bg-primary/10 text-primary"
+        : "text-text-secondary hover:text-text-primary hover:bg-secondary-light/50"
+    );
 
   return (
-    <header className="bg-white shadow-sm">
-      <div className="container-custom">
-        <div className="flex items-center justify-between py-4">
-          {/* Mobile menu button */}
-          <div className="flex items-center lg:hidden">
+    <header className="bg-background shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Left Section: Logo & Desktop Nav Toggle */}
+          <div className="flex items-center">
             <button
-              type="button"
-              className="text-neutral-600 hover:text-neutral-900"
-              onClick={toggleMenu}
+              ref={toggleButtonRef}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden mr-2 inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-secondary-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              aria-controls="mobile-menu"
+              aria-expanded={isSidebarOpen}
             >
-              <Bars3Icon className="h-6 w-6" />
+              <span className="sr-only">Open main menu</span>
+              {isSidebarOpen ? (
+                <FiX className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <FiMenu className="block h-6 w-6" aria-hidden="true" />
+              )}
             </button>
+            <Logo className="flex-shrink-0" />
           </div>
 
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
-              <span className="font-display text-xl font-bold text-primary-700">
-                Rescue Connect
-              </span>
+          {/* Center Section: Desktop Navigation */}
+          <nav className="hidden lg:flex lg:items-center lg:space-x-4">
+            {navItems.map(item => (
+              <NavLink key={item.name} to={item.path} className={linkClass}>
+                {item.name}
+              </NavLink>
+            ))}
+            <Link to="/emergency" className="ml-4">
+              {" "}
+              <Button
+                variant="danger"
+                size="md"
+                iconLeft={<FiPhoneCall />}
+                type="button"
+              >
+                Emergency
+              </Button>
             </Link>
-          </div>
-
-          {/* Desktop navigation */}
-          <nav className="hidden lg:flex lg:items-center lg:space-x-8">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-primary-700 font-medium"
-                  : "text-neutral-600 hover:text-neutral-900"
-              }
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-primary-700 font-medium"
-                  : "text-neutral-600 hover:text-neutral-900"
-              }
-            >
-              Dashboard
-            </NavLink>
-            <Link to="/emergency" className="btn-emergency">
-              Emergency
-            </Link>
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-primary-700 font-medium"
-                  : "text-neutral-600 hover:text-neutral-900"
-              }
-            >
-              About
-            </NavLink>
           </nav>
 
-          {/* Right section */}
-          <div className="flex items-center space-x-4">
-            <button className="btn-secondary hidden sm:inline-flex">
+          {/* Right Section: Actions */}
+          <div className="flex items-center space-x-3">
+            <Button variant="success" size="md">
               Register
-            </button>
-            <button
-              onClick={handleFileUpload}
-              className="btn-outline flex items-center space-x-1"
+            </Button>{" "}
+            {/* Add functionality later */}
+            <Button
+              variant="secondary"
+              size="md"
+              iconLeft={<FiUploadCloud />}
+              onClick={handleFileUploadClick}
+              className="hidden sm:inline-flex" // Hide on very small screens if needed
             >
-              <span className="text-sm">Upload</span>
-              <CameraIcon className="h-4 w-4" />
-            </button>
+              Upload Doc
+            </Button>
+            {/* Icon only button for smaller screens */}
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleFileUploadClick}
+              className="sm:hidden p-2" // Only show icon on small screens
+            >
+              <FiUploadCloud className="h-5 w-5" />
+            </Button>
             <input
               type="file"
-              id="camera-input"
-              accept=".pdf,.doc,.docx,.txt"
-              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".pdf,.doc,.docx,.txt,.jpg,.png" // Add relevant file types
+              hidden
+              aria-hidden="true"
             />
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="fixed inset-0 bg-neutral-900 bg-opacity-50"
-            onClick={toggleMenu}
-          ></div>
-          <div className="relative bg-white w-4/5 max-w-sm h-full shadow-xl flex flex-col overflow-y-auto">
-            <div className="flex items-center justify-between px-4 py-5 border-b border-neutral-200">
-              <Link
-                to="/"
-                className="font-display text-xl font-bold text-primary-700"
-              >
-                Rescue Connect
-              </Link>
-              <button
-                type="button"
-                className="text-neutral-600 hover:text-neutral-900"
-                onClick={toggleMenu}
-              >
-                <XMarkIcon className="h-6 w-6" />
-              </button>
-            </div>
-            <nav className="flex-1 px-4 py-6 space-y-6">
-              <Link
-                to="/"
-                className="block text-neutral-700 hover:text-primary-700"
-                onClick={toggleMenu}
-              >
-                Home
-              </Link>
-              <Link
-                to="/dashboard"
-                className="block text-neutral-700 hover:text-primary-700"
-                onClick={toggleMenu}
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/emergency"
-                className="block text-emergency-600 font-medium hover:text-emergency-700"
-                onClick={toggleMenu}
-              >
-                Emergency
-              </Link>
-              <Link
-                to="/about"
-                className="block text-neutral-700 hover:text-primary-700"
-                onClick={toggleMenu}
-              >
-                About
-              </Link>
-            </nav>
+      {/* Mobile Sidebar Menu */}
+      <div
+        ref={sidebarRef}
+        className={clsx(
+          "lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-background-paper shadow-xl transform transition-transform duration-300 ease-in-out",
+          {
+            "translate-x-0": isSidebarOpen,
+            "-translate-x-full": !isSidebarOpen,
+          }
+        )}
+        id="mobile-menu"
+      >
+        <div className="pt-5 pb-3 px-2 space-y-1">
+          {/* Close button inside sidebar */}
+          <div className="flex justify-between items-center mb-4 px-2">
+            <Logo />
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-secondary-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            >
+              <span className="sr-only">Close menu</span>
+              <FiX className="block h-6 w-6" aria-hidden="true" />
+            </button>
           </div>
+
+          {navItems.map(item => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={mobileLinkClass}
+              onClick={() => setIsSidebarOpen(false)} // Close sidebar on click
+            >
+              {item.name}
+            </NavLink>
+          ))}
+          <NavLink
+            to="/emergency"
+            className={clsx(
+              mobileLinkClass({ isActive: false }),
+              "text-accent-red flex items-center font-semibold"
+            )}
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <FiPhoneCall className="mr-2 h-5 w-5" /> Emergency
+          </NavLink>
         </div>
+      </div>
+      {/* Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/30 z-30"
+          aria-hidden="true"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
       )}
     </header>
   );
